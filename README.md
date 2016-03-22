@@ -1,5 +1,4 @@
-Test Repository
-===============
+Perl script for statistical calculations
+========================================
 
-Ein Repository um einiges auszuprobieren, testen , etc
-- [Ingwer](http://ingwer.sdf.org "Homepage von ingwer")
+- [multivariate.pl](http://ingwer500.github.io "ingwer on github.com")
