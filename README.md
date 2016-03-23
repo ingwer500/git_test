@@ -5,12 +5,12 @@ Perl script for statistical calculations
 
 1. Produce file with numbers
 	* Example
-[ user@box ]$ for i in 1 2 3 4 5 6 7 8 9 ; do
 
-echo $RANDOM $RANDOM $RANDOM $RANDOM  done > data.dat
+[ user@box ]$ for i in 1 2 3 4 5 6 7 8 9 ; do echo $RANDOM $RANDOM $RANDOM $RANDOM  done > data.dat
 
 2. Run the script
 	* Example
+
 [ user@box ]$ perl ./multivariate.pl --file data.dat --descriptive --intervall -1.96 1.96
 
 [ user@box ]$ perl ./multivariate.pl --file data.dat --gamma 0 inf 0.5
