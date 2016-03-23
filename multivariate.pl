@@ -67,8 +67,19 @@ my $result = GetOptions(
 
 			
 sub __Help__{
-	print "Usage: $0 [ --file file ] [--intervall value1 value2] [--gamma 0|value1 inf|value2 df] [-S|--Sxy] [-p|--pearson] [-c|--covariance]
-	[-m|--mvalues] [-r|--correlation] [-q|--quantiles] [--descriptive] [--chiInd] [--itest] [--verbose]\n" ;
+	print "Usage: $0 [ --file file ] 
+			 [--intervall value1 value2 : aproximated ]
+			 [--gamma 0|value1 inf|value2 df : aproximated ]
+			 [-S|--Sxy]
+			 [-p|--pearson]
+			 [-c|--covariance]
+			 [-m|--mvalue]
+			 [-r|--correlation]
+			 [-q|--quantiles]
+			 [--descriptive]
+			 [--chiInd: Chi for Indepedence test]
+			 [--itest : Indepedence test]
+			 [--verbose]\n" ;
 	exit ;
 }
 
@@ -366,21 +377,21 @@ sub __ChiQuadratWerte__ {
 				if ( $Freiheitsgrade > 1 ) {
 
 	if ( $prodZsumSsumdurchN[$l] == 0 ) {  print "no Chi" ; return undef ; } ;
-			 my $chi = ( ( $zlist[$j][$i] - $prodZsumSsumdurchN[$l] ) * ( $zlist[$j][$i] - $prodZsumSsumdurchN[$l] ) ) / $prodZsumSsumdurchN[$l] ;
-			 $ChiQuadratWerte[$l] = $chi ;
-			 $zuerwartendeMatrix[$i][$j] = $prodZsumSsumdurchN[$l] ;
-			 $l++ ;
-			 }else{
+	  my $chi = ( ( $zlist[$j][$i] - $prodZsumSsumdurchN[$l] ) * ( $zlist[$j][$i] - $prodZsumSsumdurchN[$l] ) ) / $prodZsumSsumdurchN[$l] ;
+	  $ChiQuadratWerte[$l] = $chi ;
+	  $zuerwartendeMatrix[$i][$j] = $prodZsumSsumdurchN[$l] ;
+	  $l++ ;
+	 }else{
 	if ( $prodZsumSsumdurchN[$l] == 0 ) {  print "no Chi" ; return undef ; } ;
-			my $chi = ( ( abs( $zlist[$j][$i] - $prodZsumSsumdurchN[$l]) - 0.5 ) * ( abs( $zlist[$j][$i] - $prodZsumSsumdurchN[$l]) - 0.5 ) ) / $prodZsumSsumdurchN[$l] ;
-			 $ChiQuadratWerte[$l] = $chi ;
-			 $zuerwartendeMatrix[$i][$j] = $prodZsumSsumdurchN[$l] ;
-			 $l++ ; }
+	my $chi = ( ( abs( $zlist[$j][$i] - $prodZsumSsumdurchN[$l]) - 0.5 ) * ( abs( $zlist[$j][$i] - $prodZsumSsumdurchN[$l]) - 0.5 ) ) / $prodZsumSsumdurchN[$l] ;
+	 $ChiQuadratWerte[$l] = $chi ;
+	 $zuerwartendeMatrix[$i][$j] = $prodZsumSsumdurchN[$l] ;
+	 $l++ ; }
 
-				} ;
+	 } ;
 
-		}
-		return \@ChiQuadratWerte, \@zuerwartendeMatrix ;
+	}
+	return \@ChiQuadratWerte, \@zuerwartendeMatrix ;
 }
 
 
@@ -566,11 +577,16 @@ sub __Gamma__($$$) {
 	my $h = 0.0001 ;	# is a good value
 	#my $h = 0.00001 ;	# is a worse value
 	my $pi = 4*atan(1) ;
+
 	my ($a,$b,$v) = @_  ;		# von 0 bis inf mit Freiheitsgrad v
+
 		#if ( $a  == 0  ) { $a = 0.0001 ;	}	# simulate Zerro good value.
 		if ( $a  == 0  ) { $a = 0.00005 ;	}	# simulate Zerro better value !
 		if ( $b eq 'inf' ) { $b = 80   ;	}	# simulate Infinite
-
+		if (  !$a || !$b || !$v  ) {
+			__Help__ ;
+		}
+		
 
 	my $n = abs ( $b-$a ) / $h ;
 	my $coef = ( $b - $a ) / ( 3 * $n ) ;
@@ -597,7 +613,8 @@ sub __Gamma__($$$) {
 
 sub __ChiVerteilung__($$$) {
 
-	my $h = 0.0001 ;	# is a good value
+	# Chi Indepedence Test is Not a homogeniety test  !
+	my $h = 0.0001 ;	# is a good value 
 	my $pi = 4*atan(1) ;
 	my ($a,$b,$v) = @_  ;		# von 0 bis inf mit Freiheitsgrad v
 	my $gamma = __Gamma__( 0, 50 , $v * 0.5 ) ;	# 50 guter Wert je hoeher n!- Wert desto genauer, kompromiss zw. Tabelle und Taschenrechner
@@ -619,7 +636,7 @@ sub __ChiVerteilung__($$$) {
 				}
 			}
 			$sum = $coef * ( $fa + $sum4 + $sum2 + $fb ) ;
-			my $result=sprintf "%.4f", $sum ;		# optimal 4f
+			my $result=sprintf "%.4f", $sum ;		# 4 decimal places
 			return  $result ;
 }
 my $Chi = __ChiQuadrat__ ;
@@ -634,10 +651,10 @@ sub __KonfidenzIntervall__(@) {
 	my $n = $data[0][1] ;
 	my $posib = __GaussVerteilung__( $a,$b ) ;
 		for my $var ( @data ) {
-					my $deviation = $var->[5] ;
-					my $sterror = $deviation / sqrt ( $n ) ;
-					printf "%s%d%s%.4f%s%.4f%s%.4f%s\n","p ( x",$i," = ",$posib," ) = [ " ,$var->[0] - $posib*$sterror," <= mu <=  ",$var->[0] + $posib*$sterror," ]" ;
-					$i = $i + 1 ;
+		 my $deviation = $var->[5] ;
+		 my $sterror = $deviation / sqrt ( $n ) ;
+		 printf "%s%d%s%.4f%s%.4f%s%.4f%s\n","p ( x",$i," = ",$posib," ) = [ " ,$var->[0] - $posib*$sterror," <= mu <=  ",$var->[0] + $posib*$sterror," ]" ;
+		 $i = $i + 1 ;
 			}
 }
 
@@ -647,8 +664,8 @@ sub __PrintDescriptive__(@) {
 	my @descriptive = () ;
 	for my $var ( @data ) { 
 
-				my $var1 = sprintf "%s%d %s %.4f   %s%d %s %.4f   %s%d\n","mean[ x",$i,"] = ",$var->[0],"s[ x",$i,"] = " ,$var->[5],"n = ",$var->[1];
-				print "$var1" ;
+		my $var1 = sprintf "%s%d %s %.4f   %s%d %s %.4f   %s%d\n","mean[ x",$i,"] = ",$var->[0],"s[ x",$i,"] = " ,$var->[5],"n = ",$var->[1];
+		print "$var1" ;
 		$i=$i+1 ;
 		}
 }
@@ -691,7 +708,8 @@ sub __PrintDescriptive__(@) {
 		 printf "%s%.4f\n","Chisquare = ", __ChiQuadrat__ ;
 	}
 	if( @optitest ){
-		printf "%s%.4f%s%d%s%.4f\n","f ( chi = ", $Chi," v = ", $v,") = ",__ChiVerteilung__(0, $Chi , $v ),"\n" if ( $Chi <= 60 )  ;
+		printf "%s%.4f%s%d%s%.4f\n","f ( chi = ", $Chi," v = ", $v,") = ",__ChiVerteilung__(0, $Chi , $v ),"\n" if ( $Chi <= 90 )  ; 
+		# indepedence test makes sense by chi Value smaller than 90
 	}
 
 #---------------------------------- Stop Hauptteil---------------------------------------#

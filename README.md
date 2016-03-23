@@ -12,4 +12,4 @@ Perl script for statistical calculations
 [ user@box ]$ perl ./multivariate.pl --file data.dat --descriptive --intervall -1.96 1.96
 
 3. You can See help by typping
-[ user@box ]$ perl ./multivariate --help
+[ user@box ]$ perl ./multivariate.pl --help
