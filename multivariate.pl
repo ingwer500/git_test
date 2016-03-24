@@ -577,15 +577,15 @@ sub __Gamma__($$$) {
 	# If you increase $h=0.1 you get better "n!"- values ( at example ./multivariate --file data.dat --gamma 0 inf 100 delivers better result )
 	# but worse sqrt( PI ) value ( at example ./multivariate --file data.dat --gamma 0 inf 0.5 delivers worse result )
 	# i decided for better sqrt(PI) value 
-	my $h = 0.0001 ;	# is a good value for sqrt(PI)
-	#my $h = 0.1 ;		# is a good value for n! 
+	#my $h = 0.0001 ;	# is a good value for sqrt(PI)
+	my $h = 1 ;		# is a good value for n! 
 	#--my $pi = 4*atan(1) ;
 
 	my ($a,$b,$v) = @_  ;		# von 0 bis inf mit Freiheitsgrad v
 
 		#if ( $a  == 0  ) { $a = 0.0001 ;	}	# simulate Zerro good value.
 		if ( $a  == 0  ) { $a = 0.00005 ;	}	# simulate Zerro better value !
-		if ( $b eq 'inf' ) { $b = 180   ;	}	# simulate Infinite
+		if ( $b eq 'inf' ) { $b = 1180   ;	}	# simulate Infinite
 		if (  !$a || !$b || !$v  ) {
 			__Help__ ;
 		}
