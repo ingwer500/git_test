@@ -22,3 +22,4 @@ Gamma ( a = 0;b = inf;df = 0.5 ) = 1.7743
 3. You can See help by typping
 
 [ user@box ]$ perl ./multivariate.pl --help
+
